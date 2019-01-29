@@ -7,17 +7,11 @@ use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterFormRequest;
+use App\Http\Controllers\Auth\AuthBaseController;
 
-class AuthController extends Controller
+class AuthRegisterController extends AuthBaseController
 {
-    protected $auth;
-
-    public function __construct(JWTAuth $auth)
-    {
-        $this->auth = $auth;
-    }
-
-    public function register(RegisterFormRequest $request)
+    public function __invoke(RegisterFormRequest $request)
     {
         // create user
         $user = User::create([
