@@ -19,15 +19,18 @@
         <ul class="navbar-nav mr-auto"></ul>
 
         <!-- Right Side Of Navbar -->
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <router-link :to="{name: 'timeline'}" class="nav-link">Timeline</router-link>
-          </li>
+        <ul class="navbar-nav ml-auto" v-if="!user.authenticated">
           <li class="nav-item">
             <router-link :to="{name: 'login'}" class="nav-link">Login</router-link>
           </li>
           <li class="nav-item">
             <router-link :to="{name: 'register'}" class="nav-link">Register</router-link>
+          </li>
+        </ul>
+
+        <ul class="navbar-nav ml-auto" v-if="user.authenticated">
+          <li class="nav-item">
+            <router-link :to="{name: 'timeline'}" class="nav-link">Timeline</router-link>
           </li>
           <li class="nav-item dropdown">
             <a
@@ -58,3 +61,14 @@
     </div>
   </nav>
 </template>
+
+
+<script>
+import { mapGetters } from "vuex";
+
+export default {
+  computed: mapGetters({
+    user: "auth/user"
+  })
+};
+</script>
