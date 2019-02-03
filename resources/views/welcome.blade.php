@@ -16,6 +16,8 @@
 </head>
 <body>
     <div id="app">
+       <navigation></navigation>
+       <br>
         <app></app>
     </div>
 
