@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
     <div class="container">
-      <a class="navbar-brand" href="#">Fresh</a>
+      <router-link :to="{ name: 'home'}" class="navbar-brand">LaraVue SPA Boilerplate</router-link>
       <button
         class="navbar-toggler"
         type="button"
@@ -20,6 +20,9 @@
 
         <!-- Right Side Of Navbar -->
         <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <router-link :to="{name: 'timeline'}" class="nav-link">Timeline</router-link>
+          </li>
           <li class="nav-item">
             <router-link :to="{name: 'login'}" class="nav-link">Login</router-link>
           </li>
