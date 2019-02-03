@@ -4,10 +4,9 @@
       <div class="col-md-8">
         <div class="card">
           <div class="card-header">Register</div>
-
           <div class="card-body">
             <form method="POST" @submit.prevent="submit">
-              <div class="form-group row">
+              <div class="form-group row" v-bind:class="{ 'has-error': errors.name }">
                 <label for="name" class="col-md-4 col-form-label text-md-right">Name</label>
                 <div class="col-md-6">
                   <input
@@ -19,9 +18,10 @@
                     autofocus
                   >
                 </div>
+                <span class="help-block" v-if="errors.name">{{ errors.name[0]}}</span>
               </div>
 
-              <div class="form-group row">
+              <div class="form-group row" :class="{ 'has-error': errors.email }">
                 <label for="email" class="col-md-4 col-form-label text-md-right">Email</label>
                 <div class="col-md-6">
                   <input
@@ -32,10 +32,11 @@
                     required
                     autofocus
                   >
+                  <span class="help-block" v-if="errors.email">{{ errors.email[0]}}</span>
                 </div>
               </div>
 
-              <div class="form-group row">
+              <div class="form-group row" :class="{ 'has-error': errors.password }">
                 <label for="password" class="col-md-4 col-form-label text-md-right">Password</label>
                 <div class="col-md-6">
                   <input
@@ -46,6 +47,7 @@
                     required
                     autofocus
                   >
+                  <span class="help-block" v-if="errors.password">{{ errors.password[0]}}</span>
                 </div>
               </div>
 
@@ -70,7 +72,8 @@ export default {
     return {
       name: "",
       email: "",
-      password: ""
+      password: "",
+      errors: ""
     };
   },
   methods: {
@@ -83,7 +86,8 @@ export default {
           name: this.name,
           email: this.email,
           password: this.password
-        }
+        },
+        context: this
       });
     }
   }
