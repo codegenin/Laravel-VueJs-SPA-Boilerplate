@@ -1938,6 +1938,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     register: "auth/register"
   }), {
     submit: function submit() {
+      var _this = this;
+
       this.register({
         payload: {
           name: this.name,
@@ -1946,7 +1948,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         },
         context: this
       }).then(function () {
-        $this.router.replace({
+        _this.$router.replace({
           name: "home"
         });
       });
@@ -55490,7 +55492,9 @@ var register = function register(_ref, _ref2) {
   var payload = _ref2.payload,
       context = _ref2.context;
   return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post("/api/register", payload).then(function (response) {
-    return console.log(response);
+    dispatch("setToken", response.data.meta.token).then(function () {
+      dispatch("fetchUser");
+    });
   }).catch(function (error) {
     context.errors = error.response.data.errors;
   });
