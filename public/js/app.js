@@ -55266,13 +55266,17 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component("app", __webpack_require__(/*! ./components/App.vue */ "./resources/js/components/App.vue").default);
-Vue.component("navigation", __webpack_require__(/*! ./components/Navigation.vue */ "./resources/js/components/Navigation.vue").default);
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
+Vue.component("navigation", __webpack_require__(/*! ./components/Navigation.vue */ "./resources/js/components/Navigation.vue").default); // check token if exist in store
 
+_vuex__WEBPACK_IMPORTED_MODULE_1__["default"].dispatch("auth/setToken").then(function () {
+  _vuex__WEBPACK_IMPORTED_MODULE_1__["default"].dispatch("auth/fetchUser").catch(function () {
+    // clear auth token if invalid
+    _vuex__WEBPACK_IMPORTED_MODULE_1__["default"].dispatch("auth/clearAuth");
+    _router__WEBPACK_IMPORTED_MODULE_0__["default"].replace({
+      name: "login"
+    });
+  });
+});
 var app = new Vue({
   el: "#app",
   router: _router__WEBPACK_IMPORTED_MODULE_0__["default"],
@@ -55473,7 +55477,7 @@ __webpack_require__.r(__webpack_exports__);
 /*!***********************************************!*\
   !*** ./resources/js/app/auth/vuex/actions.js ***!
   \***********************************************/
-/*! exports provided: register, login, fetchUser, setToken */
+/*! exports provided: register, login, fetchUser, setToken, checkTokenExists, clearAuth */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -55482,9 +55486,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "login", function() { return login; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fetchUser", function() { return fetchUser; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setToken", function() { return setToken; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "checkTokenExists", function() { return checkTokenExists; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearAuth", function() { return clearAuth; });
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../helpers */ "./resources/js/helpers/index.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var localforage__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! localforage */ "./node_modules/localforage/dist/localforage.js");
+/* harmony import */ var localforage__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(localforage__WEBPACK_IMPORTED_MODULE_3__);
+
+
 
 
 var register = function register(_ref, _ref2) {
@@ -55516,13 +55528,42 @@ var fetchUser = function fetchUser(_ref5) {
   return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/me").then(function (response) {
     commit("setAuthenticated", true);
     commit("setUserData", response.data.data);
+  }).catch(function () {
+    router.replace({
+      name: "login"
+    });
   });
 };
 var setToken = function setToken(_ref6, token) {
   var commit = _ref6.commit,
       dispatch = _ref6.dispatch;
+
+  if (Object(lodash__WEBPACK_IMPORTED_MODULE_2__["isEmpty"])(token)) {
+    return dispatch("checkTokenExists").then(function (token) {
+      Object(_helpers__WEBPACK_IMPORTED_MODULE_1__["setHttpToken"])(token);
+    });
+  }
+
   commit("setToken", token);
   Object(_helpers__WEBPACK_IMPORTED_MODULE_1__["setHttpToken"])(token);
+};
+var checkTokenExists = function checkTokenExists(_ref7, token) {
+  var commit = _ref7.commit,
+      dispatch = _ref7.dispatch;
+  return localforage__WEBPACK_IMPORTED_MODULE_3___default.a.getItem("authtoken").then(function (token) {
+    if (Object(lodash__WEBPACK_IMPORTED_MODULE_2__["isEmpty"])(token)) {
+      return Promise.reject("NOT_AUTH_TOKEN");
+    }
+
+    return Promise.resolve(token);
+  });
+};
+var clearAuth = function clearAuth(_ref8, token) {
+  var commit = _ref8.commit;
+  commit("setAuthenticated", false);
+  commit("setUserData", null);
+  commit("setToken", null);
+  Object(_helpers__WEBPACK_IMPORTED_MODULE_1__["setHttpToken"])(null);
 };
 
 /***/ }),
@@ -55595,7 +55636,7 @@ __webpack_require__.r(__webpack_exports__);
 var setToken = function setToken(state, token) {
   // check empty remove token
   if (Object(lodash__WEBPACK_IMPORTED_MODULE_1__["isEmpty"])(token)) {
-    localforeage.removeItem("authtoken", token);
+    localforage__WEBPACK_IMPORTED_MODULE_0___default.a.removeItem("authtoken", token);
     return;
   }
 
