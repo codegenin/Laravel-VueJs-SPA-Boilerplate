@@ -2,6 +2,7 @@ import axios from "axios";
 import { setHttpToken } from "../../../helpers";
 import { isEmpty } from "lodash";
 import localforage from "localforage";
+import router from "../../../router";
 
 export const register = ({ dispatch }, { payload, context }) => {
     return axios
@@ -17,24 +18,25 @@ export const register = ({ dispatch }, { payload, context }) => {
 };
 
 export const login = ({ dispatch }, { payload, context }) => {
-    return axios
-        .post("/api/login", payload)
-        .then(response => {
-            dispatch("setToken", response.data.meta.token).then(() => {
-                dispatch("fetchUser");
-            });
-        })
-        .catch(error => {
-            context.errors = error.response.data.errors;
+    return axios.post("/api/login", payload).then(response => {
+        dispatch("setToken", response.data.meta.token).then(() => {
+            dispatch("fetchUser");
         });
+    });
 };
 
 export const fetchUser = ({ commit }) => {
+    return axios.get("/api/me").then(response => {
+        commit("setAuthenticated", true);
+        commit("setUserData", response.data.data);
+    });
+};
+
+export const logout = ({ dispatch }) => {
     return axios
-        .get("/api/me")
+        .post("/api/logout")
         .then(response => {
-            commit("setAuthenticated", true);
-            commit("setUserData", response.data.data);
+            dispatch("clearAuth");
         })
         .catch(() => {
             router.replace({ name: "login" });

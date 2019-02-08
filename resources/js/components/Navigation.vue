@@ -48,12 +48,7 @@
             </a>
 
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-              <a
-                class="dropdown-item"
-                href="#"
-                onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();"
-              >Logout</a>
+              <a class="dropdown-item" @click.prevent="signout">Logout</a>
             </div>
           </li>
         </ul>
@@ -64,11 +59,21 @@
 
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   computed: mapGetters({
     user: "auth/user"
-  })
+  }),
+  methods: {
+    ...mapActions({
+      logout: "auth/logout"
+    }),
+    signout() {
+      this.logout().then(() => {
+        this.$router.replace({ name: "home" });
+      });
+    }
+  }
 };
 </script>

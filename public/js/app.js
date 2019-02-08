@@ -2025,11 +2025,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
-//
-//
-//
-//
-//
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -2094,6 +2093,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   computed: Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])({
     user: "auth/user"
+  }),
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])({
+    logout: "auth/logout"
+  }), {
+    signout: function signout() {
+      var _this = this;
+
+      this.logout().then(function () {
+        _this.$router.replace({
+          name: "home"
+        });
+      });
+    }
   })
 });
 
@@ -40320,7 +40332,32 @@ var render = function() {
                       1
                     ),
                     _vm._v(" "),
-                    _vm._m(1)
+                    _c("li", { staticClass: "nav-item dropdown" }, [
+                      _vm._m(1),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass: "dropdown-menu dropdown-menu-right",
+                          attrs: { "aria-labelledby": "navbarDropdown" }
+                        },
+                        [
+                          _c(
+                            "a",
+                            {
+                              staticClass: "dropdown-item",
+                              on: {
+                                click: function($event) {
+                                  $event.preventDefault()
+                                  return _vm.signout($event)
+                                }
+                              }
+                            },
+                            [_vm._v("Logout")]
+                          )
+                        ]
+                      )
+                    ])
                   ])
                 : _vm._e()
             ]
@@ -40356,49 +40393,25 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("li", { staticClass: "nav-item dropdown" }, [
-      _c(
-        "a",
-        {
-          pre: true,
-          attrs: {
-            id: "navbarDropdown",
-            class: "nav-link dropdown-toggle",
-            href: "#",
-            role: "button",
-            "data-toggle": "dropdown",
-            "aria-haspopup": "true",
-            "aria-expanded": "false"
-          }
-        },
-        [
-          _vm._v("\n            James\n            "),
-          _c("span", { pre: true, attrs: { class: "caret" } })
-        ]
-      ),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticClass: "dropdown-menu dropdown-menu-right",
-          attrs: { "aria-labelledby": "navbarDropdown" }
-        },
-        [
-          _c(
-            "a",
-            {
-              staticClass: "dropdown-item",
-              attrs: {
-                href: "#",
-                onclick:
-                  "event.preventDefault();\n                                                   document.getElementById('logout-form').submit();"
-              }
-            },
-            [_vm._v("Logout")]
-          )
-        ]
-      )
-    ])
+    return _c(
+      "a",
+      {
+        pre: true,
+        attrs: {
+          id: "navbarDropdown",
+          class: "nav-link dropdown-toggle",
+          href: "#",
+          role: "button",
+          "data-toggle": "dropdown",
+          "aria-haspopup": "true",
+          "aria-expanded": "false"
+        }
+      },
+      [
+        _vm._v("\n            James\n            "),
+        _c("span", { pre: true, attrs: { class: "caret" } })
+      ]
+    )
   }
 ]
 render._withStripped = true
@@ -55560,7 +55573,7 @@ __webpack_require__.r(__webpack_exports__);
 /*!***********************************************!*\
   !*** ./resources/js/app/auth/vuex/actions.js ***!
   \***********************************************/
-/*! exports provided: register, login, fetchUser, setToken, checkTokenExists, clearAuth */
+/*! exports provided: register, login, fetchUser, logout, setToken, checkTokenExists, clearAuth */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -55568,6 +55581,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "register", function() { return register; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "login", function() { return login; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fetchUser", function() { return fetchUser; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logout", function() { return logout; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setToken", function() { return setToken; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "checkTokenExists", function() { return checkTokenExists; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearAuth", function() { return clearAuth; });
@@ -55578,6 +55592,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var localforage__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! localforage */ "./node_modules/localforage/dist/localforage.js");
 /* harmony import */ var localforage__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(localforage__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../router */ "./resources/js/router/index.js");
+
 
 
 
@@ -55602,8 +55618,6 @@ var login = function login(_ref3, _ref4) {
     dispatch("setToken", response.data.meta.token).then(function () {
       dispatch("fetchUser");
     });
-  }).catch(function (error) {
-    context.errors = error.response.data.errors;
   });
 };
 var fetchUser = function fetchUser(_ref5) {
@@ -55611,15 +55625,21 @@ var fetchUser = function fetchUser(_ref5) {
   return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/me").then(function (response) {
     commit("setAuthenticated", true);
     commit("setUserData", response.data.data);
+  });
+};
+var logout = function logout(_ref6) {
+  var dispatch = _ref6.dispatch;
+  return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post("/api/logout").then(function (response) {
+    dispatch("clearAuth");
   }).catch(function () {
-    router.replace({
+    _router__WEBPACK_IMPORTED_MODULE_4__["default"].replace({
       name: "login"
     });
   });
 };
-var setToken = function setToken(_ref6, token) {
-  var commit = _ref6.commit,
-      dispatch = _ref6.dispatch;
+var setToken = function setToken(_ref7, token) {
+  var commit = _ref7.commit,
+      dispatch = _ref7.dispatch;
 
   if (Object(lodash__WEBPACK_IMPORTED_MODULE_2__["isEmpty"])(token)) {
     return dispatch("checkTokenExists").then(function (token) {
@@ -55630,9 +55650,9 @@ var setToken = function setToken(_ref6, token) {
   commit("setToken", token);
   Object(_helpers__WEBPACK_IMPORTED_MODULE_1__["setHttpToken"])(token);
 };
-var checkTokenExists = function checkTokenExists(_ref7, token) {
-  var commit = _ref7.commit,
-      dispatch = _ref7.dispatch;
+var checkTokenExists = function checkTokenExists(_ref8, token) {
+  var commit = _ref8.commit,
+      dispatch = _ref8.dispatch;
   return localforage__WEBPACK_IMPORTED_MODULE_3___default.a.getItem("authtoken").then(function (token) {
     if (Object(lodash__WEBPACK_IMPORTED_MODULE_2__["isEmpty"])(token)) {
       return Promise.reject("NOT_AUTH_TOKEN");
@@ -55641,8 +55661,8 @@ var checkTokenExists = function checkTokenExists(_ref7, token) {
     return Promise.resolve(token);
   });
 };
-var clearAuth = function clearAuth(_ref8, token) {
-  var commit = _ref8.commit;
+var clearAuth = function clearAuth(_ref9, token) {
+  var commit = _ref9.commit;
   commit("setAuthenticated", false);
   commit("setUserData", null);
   commit("setToken", null);
