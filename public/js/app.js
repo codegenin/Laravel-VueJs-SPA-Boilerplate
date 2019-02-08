@@ -1764,6 +1764,10 @@ module.exports = {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var localforage__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! localforage */ "./node_modules/localforage/dist/localforage.js");
+/* harmony import */ var localforage__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(localforage__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_2__);
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -1813,6 +1817,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -1834,8 +1840,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         },
         context: this
       }).then(function () {
-        _this.$router.replace({
-          name: "home"
+        localforage__WEBPACK_IMPORTED_MODULE_1___default.a.getItem("intended").then(function (name) {
+          if (Object(lodash__WEBPACK_IMPORTED_MODULE_2__["isEmpty"])(name)) {
+            _this.$router.replace({
+              name: "home"
+            });
+
+            return;
+          }
+
+          _this.$router.replace({
+            name: name
+          });
         });
       });
     }
@@ -56169,6 +56185,9 @@ var setHttpToken = function setHttpToken(token) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../vuex */ "./resources/js/vuex/index.js");
+/* harmony import */ var localforage__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! localforage */ "./node_modules/localforage/dist/localforage.js");
+/* harmony import */ var localforage__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(localforage__WEBPACK_IMPORTED_MODULE_1__);
+
 
 
 var beforeEach = function beforeEach(to, from, next) {
@@ -56183,6 +56202,7 @@ var beforeEach = function beforeEach(to, from, next) {
     next();
   }).catch(function () {
     if (to.meta.needsAuth) {
+      localforage__WEBPACK_IMPORTED_MODULE_1___default.a.setItem("intended", to.name);
       next({
         name: "login"
       });
